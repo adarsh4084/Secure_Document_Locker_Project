@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Log in | Vaultly{% endblock %}
+{% block body_class %}auth-body{% endblock %}
+{% block content %}
+<section class="auth-layout section-wrap">
+  <div class="auth-story">
+    <div class="eyebrow"><span class="eyebrow-dot"></span> WELCOME BACK</div>
+    <h1>Your private space<br>is waiting.</h1>
+    <p>Pick up where you left off. Your documents stay encrypted until you unlock your vault.</p>
+    <div class="auth-story-card">
+      <div class="story-shield">✓</div>
+      <div><strong>Your privacy comes first</strong><small>Files are encrypted before being saved. A separate PIN
+          protects sensitive actions.</small></div>
+    </div>
+    <div class="auth-quote">“A little extra protection goes a long way.”</div>
+  </div>
+  <div class="auth-panel">
+    <div class="auth-panel-heading"><span class="auth-icon lock-icon">⌑</span>
+      <div class="eyebrow">SECURE SIGN IN</div>
+      <h2>Welcome back</h2>
+      <p>Enter your account details to open your vault.</p>
+    </div>
+    <form method="post" action="{{ url_for('login') }}" class="form-stack">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <div class="field"><label for="username">Username</label>
+        <div class="input-wrap"><span class="input-icon">♙</span><input id="username" name="username" type="text"
+            autocomplete="username" placeholder="Your username" value="{{ form_username|default('') }}" required
+            autofocus maxlength="24"></div>
+      </div>
+      <div class="field">
+        <div class="label-row"><label for="password">Password</label><span class="field-note">Keep it private</span>
+        </div>
+        <div class="input-wrap"><span class="input-icon">⌑</span><input id="password" name="password" type="password"
+            autocomplete="current-password" placeholder="Enter your password" required><button class="password-toggle"
+            type="button" data-toggle-password="password" aria-label="Show password">Show</button></div>
+      </div>
+      <button class="button button-primary button-full button-large" type="submit">Log in to your vault
+        <span>↗</span></button>
+    </form>
+    <div class="auth-divider"><span></span><small>NEW TO VAULTLY?</small><span></span></div>
+    <a class="button button-outline button-full" href="{{ url_for('register') }}">Create a new account</a>
+    <div class="form-security-note"><span>⌑</span><span>Never share your password or six-digit PIN with anyone.</span>
+    </div>
+  </div>
+</section>
+{% endblock %}

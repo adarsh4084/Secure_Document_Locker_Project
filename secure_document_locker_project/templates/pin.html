@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Verify PIN | Vaultly{% endblock %}
+{% block body_class %}auth-body{% endblock %}
+{% block content %}
+<section class="pin-page section-wrap"><a class="back-link" href="{{ url_for('dashboard') }}">← Back to your
+    documents</a>
+  <div class="pin-panel">
+    <div class="pin-lock-art">
+      <div class="pin-lock-circle"><span>⌑</span></div><span class="pin-orbit pin-orbit-a"></span><span
+        class="pin-orbit pin-orbit-b"></span>
+    </div>
+    <div class="eyebrow">EXTRA SECURITY CHECK</div>
+    <h1>{% if action == 'view' %}Unlock document{% elif action == 'download' %}Confirm download{% else %}Confirm
+      deletion{% endif %}</h1>
+    <p class="pin-page-lead">For your protection, enter your six-digit PIN before this action continues.</p>
+    <div class="pin-document-card"><span
+        class="document-type-icon {% if document.mime_type == 'application/pdf' %}file-pdf{% elif document.mime_type.startswith('image/') %}file-image{% else %}file-generic{% endif %}">{%
+        if document.mime_type == 'application/pdf' %}PDF{% elif document.mime_type.startswith('image/') %}IMG{% else
+        %}DOC{% endif %}</span>
+      <div><strong>{{ document.title }}</strong><small>{{ document.original_filename }} · {{
+          format_bytes(document.size_bytes) }}</small></div><span class="pin-protected-icon">⌑</span>
+    </div>
+    {% if action == 'delete' %}<div class="delete-warning"><span>!</span>
+      <p><strong>This will permanently delete the encrypted file.</strong> Its action record will remain in your
+        activity history.</p>
+    </div>{% endif %}
+    <form method="post" class="pin-verify-form"
+      action="{{ url_for('file_action', file_id=document.id, action=action) }}" data-pin-verify-form><input
+        type="hidden" name="csrf_token" value="{{ csrf_token }}"><label for="verify-pin">Your 6-digit security
+        PIN</label>
+      <div class="verify-pin-wrap"><span>⌑</span><input id="verify-pin" name="pin" type="password" inputmode="numeric"
+          pattern="[0-9]{6}" maxlength="6" minlength="6" autocomplete="off" placeholder="• • • • • •" required autofocus
+          data-pin-input></div>
+      <div class="pin-progress-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div><button
+        class="button {% if action == 'delete' %}button-danger{% else %}button-primary{% endif %} button-large button-full"
+        type="submit">{% if action == 'view' %}Verify PIN &amp; view file{% elif action == 'download' %}Verify PIN &amp;
+        download{% else %}Verify PIN &amp; delete{% endif %} <span>→</span></button>
+    </form>
+    <div class="pin-bottom-note"><span>⌑</span><span>Your PIN is checked securely and is never written to the activity
+        log.</span></div>
+  </div>
+</section>
+{% endblock %}

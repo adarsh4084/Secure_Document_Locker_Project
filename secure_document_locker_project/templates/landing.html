@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% block title %}Vaultly | Your private document space{% endblock %}
+{% block body_class %}landing-page{% endblock %}
+{% block content %}
+<section class="hero section-wrap">
+  <div class="hero-copy">
+    <div class="eyebrow"><span class="eyebrow-dot"></span> YOUR PRIVATE DIGITAL VAULT</div>
+    <h1>Important documents.<br><span>Better protected.</span></h1>
+    <p class="hero-lead">One calm, secure place for the files you care about. Encrypt your documents, organise them by
+      type, and unlock them only when you need them.</p>
+    <div class="hero-actions">
+      <a class="button button-primary button-large" href="{{ url_for('register') }}">Create a secure vault <span
+          aria-hidden="true">↗</span></a>
+      <a class="button button-ghost button-large" href="{{ url_for('login') }}"><span class="button-play">↗</span> I
+        already have an account</a>
+    </div>
+    <div class="trust-line"><span class="trust-icon">✓</span><span>No external storage required</span><span
+        class="trust-separator">·</span><span>Encryption at rest</span><span
+        class="trust-separator">·</span><span>PIN-protected access</span></div>
+  </div>
+  <div class="hero-art" aria-label="Illustration of a protected document vault">
+    <div class="art-glow"></div>
+    <div class="floating-pill pill-top"><span class="pill-check">✓</span><span><strong>Encryption
+          active</strong><small>AES-256-GCM</small></span></div>
+    <div class="vault-card">
+      <div class="vault-card-top"><span class="mini-lock">⌑</span><span
+          class="vault-dot-row"><i></i><i></i><i></i></span><span class="vault-private">PRIVATE SPACE</span></div>
+      <div class="vault-illustration">
+        <div class="vault-orbit orbit-one"></div>
+        <div class="vault-orbit orbit-two"></div>
+        <div class="vault-shield"><span>✓</span></div>
+        <div class="orbit-dot dot-one"></div>
+        <div class="orbit-dot dot-two"></div>
+      </div>
+      <div class="vault-card-bottom">
+        <div><strong>Your vault is ready</strong><small>Only you can unlock your files</small></div><span
+          class="vault-status"><i></i> Protected</span>
+      </div>
+      <div class="fake-file-row"><span class="fake-file-icon icon-pdf">PDF</span><span
+          class="fake-file-name"><b>Identity documents</b><small>Encrypted · 2 files</small></span><span
+          class="fake-lock">⌑</span></div>
+      <div class="fake-file-row"><span class="fake-file-icon icon-doc">DOC</span><span
+          class="fake-file-name"><b>Academic records</b><small>Encrypted · 4 files</small></span><span
+          class="fake-lock">⌑</span></div>
+    </div>
+    <div class="floating-pill pill-bottom"><span
+        class="pin-squares"><i>•</i><i>•</i><i>•</i><i>•</i><i>•</i><i>•</i></span><span><strong>Two-step
+          unlock</strong><small>Password + 6-digit PIN</small></span></div>
+  </div>
+</section>
+
+<section class="proof-strip section-wrap" aria-label="Security features">
+  <div class="proof-item"><span class="proof-icon">⌑</span>
+    <div><strong>Encrypted storage</strong><small>Your file contents are unreadable at rest.</small></div>
+  </div>
+  <div class="proof-item"><span class="proof-icon">◉</span>
+    <div><strong>Extra PIN check</strong><small>View and download actions need a PIN.</small></div>
+  </div>
+  <div class="proof-item"><span class="proof-icon">↻</span>
+    <div><strong>Activity history</strong><small>Review uploads, views, downloads and deletes.</small></div>
+  </div>
+</section>
+
+<section class="section-wrap how-section" id="how-it-works">
+  <div class="section-heading centered-heading">
+    <div class="eyebrow">SIMPLE BY DESIGN</div>
+    <h2>Protection in three easy steps.</h2>
+    <p>A useful vault should feel simple to use, while security works quietly in the background.</p>
+  </div>
+  <div class="steps-grid">
+    <article class="step-card">
+      <div class="step-num">01</div>
+      <div class="step-icon purple-icon">♙</div>
+      <h3>Create your account</h3>
+      <p>Choose a username and strong password, then set a private six-digit security PIN.</p>
+    </article>
+    <article class="step-card">
+      <div class="step-num">02</div>
+      <div class="step-icon blue-icon">⇧</div>
+      <h3>Upload and encrypt</h3>
+      <p>Add a file, choose a category, and let Vaultly encrypt the file before saving it.</p>
+    </article>
+    <article class="step-card">
+      <div class="step-num">03</div>
+      <div class="step-icon green-icon">⌑</div>
+      <h3>Unlock when needed</h3>
+      <p>Search your vault and verify your PIN before previewing, downloading, or deleting a file.</p>
+    </article>
+  </div>
+</section>
+
+<section class="security-band" id="security">
+  <div class="section-wrap security-band-inner">
+    <div class="security-band-copy">
+      <div class="eyebrow eyebrow-light">BUILT AROUND SECURITY</div>
+      <h2>Protection you can explain,<br>not just a lock icon.</h2>
+      <p>Vaultly uses authenticated encryption, password-based key protection, PIN verification, expiring sessions, and
+        a record of important actions.</p><a class="text-link text-link-light" href="{{ url_for('register') }}">Build
+        your private vault <span>↗</span></a>
+    </div>
+    <div class="security-check-list">
+      <div><span>✓</span>
+        <p><strong>AES-256-GCM</strong><small>Encrypts file contents and detects tampering.</small></p>
+      </div>
+      <div><span>✓</span>
+        <p><strong>PBKDF2 + Scrypt</strong><small>Derives key material and protects stored credentials.</small></p>
+      </div>
+      <div><span>✓</span>
+        <p><strong>Activity trail</strong><small>Keeps a history of important vault actions.</small></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="final-cta section-wrap">
+  <div>
+    <div class="eyebrow">START WITH A CLEAN SLATE</div>
+    <h2>Your documents deserve<br>a safer home.</h2>
+    <p>Create your vault in a couple of steps.</p>
+  </div><a class="button button-primary button-large" href="{{ url_for('register') }}">Get started for free <span
+      aria-hidden="true">↗</span></a>
+</section>
+{% endblock %}

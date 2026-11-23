@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard | Vaultly{% endblock %}
+{% block body_class %}app-body{% endblock %}
+{% block content %}
+<section class="dashboard-shell section-wrap">
+  <div class="dashboard-welcome">
+    <div>
+      <div class="eyebrow"><span class="eyebrow-dot"></span> YOUR PERSONAL VAULT</div>
+      <h1>Good to see you, <span>{{ current_user.username }}</span>.</h1>
+      <p>Your documents are secured in one place. Upload, search, and manage them whenever you need.</p>
+    </div>
+    <div class="vault-status-card">
+      <div class="status-orb">✓</div>
+      <div><strong>Vault protected</strong><small>AES-256-GCM encryption</small></div><span
+        class="status-live-dot"></span>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <article class="stat-card">
+      <div class="stat-top"><span class="stat-icon stat-purple">▤</span><span class="stat-label">TOTAL DOCUMENTS</span>
+      </div>
+      <div class="stat-value">{{ total_document_count }}</div>
+      <div class="stat-foot"><span class="stat-foot-dot purple-dot"></span>Across your personal vault</div>
+    </article>
+    <article class="stat-card">
+      <div class="stat-top"><span class="stat-icon stat-blue">⌑</span><span class="stat-label">ENCRYPTED STORAGE</span>
+      </div>
+      <div class="stat-value">{{ format_bytes(total_size) }}</div>
+      <div class="stat-foot"><span class="stat-foot-dot blue-dot"></span>Encrypted file contents</div>
+    </article>
+    <article class="stat-card">
+      <div class="stat-top"><span class="stat-icon stat-green">◉</span><span class="stat-label">FILE VIEWS</span></div>
+      <div class="stat-value">{{ view_count }}</div>
+      <div class="stat-foot"><span class="stat-foot-dot green-dot"></span>PIN-verified view actions</div>
+    </article>
+    <article class="stat-card">
+      <div class="stat-top"><span class="stat-icon stat-orange">↓</span><span class="stat-label">DOWNLOADS</span></div>
+      <div class="stat-value">{{ download_count }}</div>
+      <div class="stat-foot"><span class="stat-foot-dot orange-dot"></span>PIN-verified downloads</div>
+    </article>
+  </div>
+
+  <div class="dashboard-columns">
+    <div class="dashboard-main-column">
+      <section class="panel upload-panel" id="upload">
+        <div class="panel-heading">
+          <div>
+            <div class="eyebrow">ADD TO YOUR VAULT</div>
+            <h2>Upload &amp; encrypt</h2>
+            <p>Choose a file and give it a label you will recognise later.</p>
+          </div><span class="panel-heading-icon">⇧</span>
+        </div>
+        <form method="post" action="{{ url_for('upload') }}" enctype="multipart/form-data" class="upload-form"
+          data-upload-form>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <div class="upload-fields-row">
+            <div class="field"><label for="title">Document title</label><input class="control" id="title" name="title"
+                type="text" maxlength="100" placeholder="e.g. Semester 3 marksheet" required></div>
+            <div class="field"><label for="doc_type">Document type</label><select class="control" id="doc_type"
+                name="doc_type" required>{% for category in categories %}<option value="{{ category }}" {% if
+                  category=='Personal' %}selected{% endif %}>{{ category }}</option>{% endfor %}</select></div>
+          </div>
+          <label class="file-dropzone" for="document-file" data-file-dropzone><span class="upload-cloud">↑</span><span
+              class="drop-main" data-file-name>Choose a document to protect</span><span class="drop-help">Click to
+              browse your device · most file types supported</span><span
+              class="file-kind-pills"><i>PDF</i><i>DOCX</i><i>PNG</i><i>TXT</i><i>+ more</i></span><input
+              id="document-file" name="document" type="file" required data-file-input></label>
+          <div class="upload-bottom">
+            <div class="upload-security-note"><span>⌑</span><span>Encrypted before it is stored<br><small>Your original
+                  file is not stored in plaintext in the vault folder.</small></span></div><button
+              class="button button-primary" type="submit" data-upload-submit><span class="button-upload-icon">⇧</span>
+              Upload &amp; encrypt</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel documents-panel" id="documents">
+        <div class="panel-heading documents-heading">
+          <div>
+            <div class="eyebrow">YOUR PRIVATE LIBRARY</div>
+            <h2>My documents <span class="count-bubble">{{ total_docs }}</span></h2>
+            <p>Every stored file is encrypted. A six-digit PIN is required for sensitive actions.</p>
+          </div><a class="text-link" href="{{ url_for('history') }}">Activity history <span>↗</span></a>
+        </div>
+        <form class="document-filters" method="get" action="{{ url_for('dashboard') }}">
+          <div class="search-control"><span aria-hidden="true">⌕</span><input type="search" name="q" value="{{ q }}"
+              placeholder="Search title or filename..." aria-label="Search documents"></div>
+          <select class="control filter-select" name="type" aria-label="Filter by document type">
+            <option value="">All document types</option>{% for category in categories %}<option value="{{ category }}"
+              {% if selected_type==category %}selected{% endif %}>{{ category }}</option>{% endfor %}
+          </select>
+          <button class="button button-outline button-small" type="submit">Search</button>
+          {% if q or selected_type %}<a class="clear-filter" href="{{ url_for('dashboard') }}">Clear</a>{% endif %}
+        </form>
+        {% if documents %}
+        <div class="document-list">
+          {% for doc in documents %}
+          <article class="document-row">
+            <span
+              class="document-type-icon {% if doc.mime_type == 'application/pdf' %}file-pdf{% elif doc.mime_type.startswith('image/') %}file-image{% elif doc.mime_type.startswith('text/') %}file-text{% else %}file-generic{% endif %}">{%
+              if doc.mime_type == 'application/pdf' %}PDF{% elif doc.mime_type.startswith('image/') %}IMG{% elif
+              doc.mime_type.startswith('text/') %}TXT{% else %}DOC{% endif %}</span>
+            <div class="document-info"><strong>{{ doc.title }}</strong><span>{{ doc.original_filename }}</span>
+              <div class="document-mobile-meta"><span>{{ doc.doc_type }}</span><span>·</span><span>{{
+                  format_bytes(doc.size_bytes) }}</span></div>
+            </div>
+            <div class="document-type-cell"><span class="category-pill">{{ doc.doc_type }}</span><small>{{
+                format_bytes(doc.size_bytes) }}</small></div>
+            <div class="document-date">{{ doc.created_at|datetime_short }}</div>
+            <div class="document-lock" title="Encrypted at rest">⌑</div>
+            <div class="document-actions"><a class="action-button action-view"
+                href="{{ url_for('file_action', file_id=doc.id, action='view') }}" title="View after PIN verification"
+                aria-label="View {{ doc.title }}">◉</a><a class="action-button action-download"
+                href="{{ url_for('file_action', file_id=doc.id, action='download') }}"
+                title="Download after PIN verification" aria-label="Download {{ doc.title }}">↓</a><a
+                class="action-button action-delete" href="{{ url_for('file_action', file_id=doc.id, action='delete') }}"
+                title="Delete after PIN verification" aria-label="Delete {{ doc.title }}">×</a></div>
+          </article>
+          {% endfor %}
+        </div>
+        {% if total_pages > 1 %}<div class="pagination"><span>Page {{ page }} of {{ total_pages }}</span>
+          <div>{% if page > 1 %}<a href="{{ url_for('dashboard', q=q, type=selected_type, page=page-1) }}">←
+              Previous</a>{% endif %}{% if page < total_pages %}<a
+              href="{{ url_for('dashboard', q=q, type=selected_type, page=page+1) }}">Next →</a>{% endif %}</div>
+        </div>{% endif %}
+        {% else %}
+        <div class="empty-state">
+          <div class="empty-illustration"><span>▤</span><i>⌑</i></div>{% if q or selected_type %}<h3>No matching
+            documents</h3>
+          <p>Try a different title, filename, or document type.</p><a class="button button-outline"
+            href="{{ url_for('dashboard') }}">Clear search</a>{% else %}<h3>Your vault is ready for its first file.</h3>
+          <p>Upload a document above. Vaultly will encrypt it before saving it here.</p><a class="button button-primary"
+            href="#upload">Upload your first document <span>↑</span></a>{% endif %}
+        </div>
+        {% endif %}
+      </section>
+    </div>
+
+    <aside class="dashboard-side-column">
+      <section class="panel how-panel">
+        <div class="side-panel-heading"><span class="side-panel-icon violet-icon">✦</span>
+          <div>
+            <h3>How your vault works</h3>
+            <p>Security in the background</p>
+          </div>
+        </div>
+        <div class="how-list">
+          <div class="how-list-item"><span class="how-step">1</span>
+            <p><strong>Upload</strong><small>Choose a file and category.</small></p>
+          </div>
+          <div class="how-connector"></div>
+          <div class="how-list-item"><span class="how-step">2</span>
+            <p><strong>Encrypt</strong><small>File content is encrypted with AES-256-GCM.</small></p>
+          </div>
+          <div class="how-connector"></div>
+          <div class="how-list-item"><span class="how-step">3</span>
+            <p><strong>Unlock</strong><small>Verify your PIN before view or download.</small></p>
+          </div>
+        </div><a class="side-panel-link" href="{{ url_for('security') }}">Explore security details <span>↗</span></a>
+      </section>
+      <section class="panel recent-panel">
+        <div class="side-panel-heading"><span class="side-panel-icon blue-icon">↻</span>
+          <div>
+            <h3>Recent activity</h3>
+            <p>Your vault, at a glance</p>
+          </div>
+        </div>{% if recent_activity %}<div class="recent-list">{% for event in recent_activity %}<div
+            class="recent-item"><span class="activity-glyph activity-{{ event.action|lower }}">{{
+              event.action|action_icon }}</span>
+            <div><strong>{{ event.action|action_label }}</strong><small>{{ event.file_name or event.details
+                }}</small><time>{{ event.created_at|datetime_short }}</time></div>
+          </div>{% endfor %}</div>{% else %}<div class="activity-empty"><span>↻</span>
+          <p>Your activity will appear here after you use your vault.</p>
+        </div>{% endif %}<a class="side-panel-link" href="{{ url_for('history') }}">View full history <span>↗</span></a>
+      </section>
+      <div class="tip-card"><span class="tip-sparkle">✦</span>
+        <div><strong>A quick security tip</strong>
+          <p>Use a unique password and never share your six-digit PIN. Vaultly locks PIN actions briefly after repeated
+            incorrect attempts.</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+  <div class="dashboard-disclaimer"><span>ⓘ</span>
+    <p><strong>Project note:</strong> This is a local educational application. For real-world sensitive documents,
+      deploy behind HTTPS, protect the host and backups, and arrange an audited recovery and key-management process.</p>
+  </div>
+</section>
+{% endblock %}

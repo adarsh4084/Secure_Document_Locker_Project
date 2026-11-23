@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Preview unavailable | Vaultly{% endblock %}
+{% block body_class %}app-body{% endblock %}
+{% block content %}
+<section class="unavailable-page section-wrap">
+    <div class="unavailable-card">
+        <div class="unavailable-icon">▤</div>
+        <div class="eyebrow">FILE UNLOCKED · PREVIEW NOT AVAILABLE</div>
+        <h1>{{ document.title }}</h1>
+        <p>{{ reason }}</p>
+        <div class="unavailable-meta"><span>{{ document.original_filename }}</span><span>{{
+                format_bytes(document.size_bytes) }}</span><span>{{ document.doc_type }}</span></div>
+        <div class="unavailable-actions"><a class="button button-primary"
+                href="{{ url_for('file_action', file_id=document.id, action='download') }}">Enter PIN to download
+                <span>↓</span></a><a class="button button-outline" href="{{ url_for('dashboard') }}">Back to vault</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

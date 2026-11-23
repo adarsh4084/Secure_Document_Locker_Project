@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% block title %}{% if step == 2 %}Set your security PIN{% else %}Create an account{% endif %} | Vaultly{% endblock %}
+{% block body_class %}auth-body register-body{% endblock %}
+{% block content %}
+<section class="auth-layout register-layout section-wrap">
+  <div class="auth-story register-story">
+    <div class="eyebrow"><span class="eyebrow-dot"></span> MAKE IT YOURS</div>
+    <h1>A safer place<br>for your <span>important files.</span></h1>
+    <p>Set up your vault once. After that, your files are organised, encrypted, and protected by a separate PIN.</p>
+    <div class="register-benefits">
+      <div><span>01</span>
+        <p><strong>Private by default</strong><small>Your password helps protect your vault key.</small></p>
+      </div>
+      <div><span>02</span>
+        <p><strong>A second lock</strong><small>A separate six-digit PIN protects file actions.</small></p>
+      </div>
+      <div><span>03</span>
+        <p><strong>Know what happened</strong><small>Review your upload and access history.</small></p>
+      </div>
+    </div>
+  </div>
+  <div class="auth-panel register-panel">
+    <div class="progress-header">
+      <div class="progress-step {% if step == 1 %}progress-current{% else %}progress-done{% endif %}"><span>{% if step
+          == 1 %}1{% else %}✓{% endif %}</span>
+        <div><small>STEP ONE</small><strong>Account details</strong></div>
+      </div>
+      <div class="progress-line {% if step == 2 %}progress-line-done{% endif %}"></div>
+      <div class="progress-step {% if step == 2 %}progress-current{% endif %}"><span>2</span>
+        <div><small>STEP TWO</small><strong>Security PIN</strong></div>
+      </div>
+    </div>
+    {% if step == 1 %}
+    <div class="auth-panel-heading compact-heading">
+      <div class="eyebrow">YOUR ACCOUNT</div>
+      <h2>Create your vault</h2>
+      <p>Start with the login details you will remember.</p>
+    </div>
+    <form method="post" action="{{ url_for('register') }}" class="form-stack" data-password-form>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <div class="field"><label for="username">Choose a username</label>
+        <div class="input-wrap"><span class="input-icon">♙</span><input id="username" name="username" type="text"
+            autocomplete="username" placeholder="e.g. anshu_01" value="{{ form_username|default('') }}" minlength="3"
+            maxlength="24" pattern="[A-Za-z0-9_.-]{3,24}" required autofocus><span class="input-ok">✓</span></div><small
+          class="field-help">3-24 characters. Letters, numbers, dot, underscore, and hyphen.</small>
+      </div>
+      <div class="field"><label for="password">Create a strong password</label>
+        <div class="input-wrap"><span class="input-icon">⌑</span><input id="password" name="password" type="password"
+            autocomplete="new-password" placeholder="At least 10 characters" minlength="10" required
+            data-password-check><button class="password-toggle" type="button" data-toggle-password="password"
+            aria-label="Show password">Show</button></div>
+        <div class="password-rules"><span data-rule="length">10+ characters</span><span
+            data-rule="upper">Uppercase</span><span data-rule="number">Number</span><span
+            data-rule="symbol">Symbol</span></div>
+      </div>
+      <div class="field"><label for="confirm_password">Confirm password</label>
+        <div class="input-wrap"><span class="input-icon">✓</span><input id="confirm_password" name="confirm_password"
+            type="password" autocomplete="new-password" placeholder="Type your password again" required
+            data-confirm-password><button class="password-toggle" type="button" data-toggle-password="confirm_password"
+            aria-label="Show confirmation password">Show</button></div><small class="field-help"
+          data-confirm-message>Use the same password in both fields.</small>
+      </div>
+      <button class="button button-primary button-full button-large" type="submit">Continue to step 2
+        <span>→</span></button>
+    </form>
+    <div class="auth-bottom-note">Already have an account? <a href="{{ url_for('login') }}">Log in</a></div>
+    {% else %}
+    <div class="auth-panel-heading compact-heading">
+      <div class="eyebrow">YOUR SECOND LOCK</div>
+      <h2>Set a six-digit PIN</h2>
+      <p>Hi <strong>{{ draft_username }}</strong>, choose a PIN you can remember. We will ask for it before you view or
+        download files.</p>
+    </div>
+    <form method="post" action="{{ url_for('register_pin') }}" class="form-stack" data-pin-form>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <div class="pin-explainer"><span class="pin-big-icon">▦</span>
+        <div><strong>Keep this PIN separate</strong><small>Do not use your account password as your PIN.</small></div>
+      </div>
+      <div class="field"><label for="pin">Six-digit security PIN</label>
+        <div class="input-wrap pin-input-wrap"><span class="input-icon">⌑</span><input id="pin" name="pin"
+            type="password" inputmode="numeric" pattern="[0-9]{6}" minlength="6" maxlength="6" autocomplete="off"
+            placeholder="• • • • • •" required data-pin-input></div>
+        <div class="pin-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+      <div class="field"><label for="confirm_pin">Confirm security PIN</label>
+        <div class="input-wrap pin-input-wrap"><span class="input-icon">✓</span><input id="confirm_pin"
+            name="confirm_pin" type="password" inputmode="numeric" pattern="[0-9]{6}" minlength="6" maxlength="6"
+            autocomplete="off" placeholder="Enter the same six digits" required data-pin-confirm></div><small
+          class="field-help" data-pin-message>Use exactly six numbers, from 0 to 9.</small>
+      </div>
+      <div class="pin-warning"><span>!</span>
+        <p><strong>Remember your PIN.</strong> For this project, there is no self-service PIN recovery screen. If you
+          lose it, access to PIN-protected file actions will be blocked.</p>
+      </div>
+      <button class="button button-primary button-full button-large" type="submit">Finish account setup
+        <span>✓</span></button>
+    </form>
+    <div class="auth-bottom-note"><a href="{{ url_for('register') }}">← Back to step 1</a></div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

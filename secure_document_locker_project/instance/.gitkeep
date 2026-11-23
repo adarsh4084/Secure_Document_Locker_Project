@@ -1,0 +1,1 @@
+Runtime data folder. The application creates secrets, the database, encrypted files, and temporary files here when it is first run.

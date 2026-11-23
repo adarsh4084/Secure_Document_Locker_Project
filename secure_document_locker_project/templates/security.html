@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}Security overview | Vaultly{% endblock %}
+{% block body_class %}app-body{% endblock %}
+{% block content %}
+<section class="security-page section-wrap">
+  <div class="page-title-row">
+    <div>
+      <div class="eyebrow"><span class="eyebrow-dot"></span> INSIDE YOUR VAULT</div>
+      <h1>Security overview</h1>
+      <p>Understand how Vaultly protects account access and document contents.</p>
+    </div><a class="button button-outline" href="{{ url_for('dashboard') }}">← Back to dashboard</a>
+  </div>
+  <div class="security-summary-banner">
+    <div class="security-summary-mark">⌑</div>
+    <div><span class="status-kicker">VAULT STATUS</span>
+      <h2>Your vault is active</h2>
+      <p>{{ document_count }} document(s) currently stored as encrypted files. Files require PIN verification for view,
+        download, and delete actions.</p>
+    </div><span class="security-active-pill"><i></i> Active</span>
+  </div>
+  <div class="security-feature-grid">
+    <article class="security-feature-card"><span class="feature-number">01</span>
+      <div class="security-feature-icon purple-icon">▧</div>
+      <h3>AES-256-GCM file encryption</h3>
+      <p>Every file receives a fresh random data key and a unique nonce. GCM authenticates encrypted content so
+        tampering is detected when the file is opened.</p>
+      <div class="feature-tag">CONFIDENTIALITY + INTEGRITY</div>
+    </article>
+    <article class="security-feature-card"><span class="feature-number">02</span>
+      <div class="security-feature-icon blue-icon">⌑</div>
+      <h3>Password-protected vault key</h3>
+      <p>A key derived from the account password wraps the random vault key. The application verifies the password
+        before unlocking that key at sign-in.</p>
+      <div class="feature-tag">PBKDF2-HMAC-SHA256</div>
+    </article>
+    <article class="security-feature-card"><span class="feature-number">03</span>
+      <div class="security-feature-icon green-icon">▦</div>
+      <h3>Separate six-digit PIN</h3>
+      <p>The PIN is stored as a salted Scrypt hash. Failed PIN checks are rate-limited, with a temporary lock after
+        repeated errors.</p>
+      <div class="feature-tag">SALT + SCRYPT + LOCKOUT</div>
+    </article>
+    <article class="security-feature-card"><span class="feature-number">04</span>
+      <div class="security-feature-icon orange-icon">◷</div>
+      <h3>Session and form protection</h3>
+      <p>The browser receives a signed session token, while vault key material is kept server-side in an encrypted
+        session record. Forms use CSRF tokens and sessions expire.</p>
+      <div class="feature-tag">HTTPONLY COOKIE + CSRF</div>
+    </article>
+    <article class="security-feature-card"><span class="feature-number">05</span>
+      <div class="security-feature-icon pink-icon">↻</div>
+      <h3>Activity history</h3>
+      <p>Successful actions and important security events are recorded with a timestamp and a short description, without
+        recording passwords, PINs, or file content.</p>
+      <div class="feature-tag">LOCAL AUDIT HISTORY</div>
+    </article>
+    <article class="security-feature-card"><span class="feature-number">06</span>
+      <div class="security-feature-icon slate-icon">⌂</div>
+      <h3>Local storage by default</h3>
+      <p>Encrypted file blobs are stored under the local instance folder, while SQLite stores metadata and encrypted key
+        material. No third-party cloud is required.</p>
+      <div class="feature-tag">LOCAL-FIRST DEMO</div>
+    </article>
+  </div>
+  <div class="security-warning-panel">
+    <div class="warning-symbol">!</div>
+    <div>
+      <h3>Important before using real sensitive files</h3>
+      <p>This is a learning project, not a formally audited vault. Keep the app secret key safe, use HTTPS in
+        deployment, restrict operating-system access to the instance folder, protect backups, add a secure recovery
+        process, and have the code independently reviewed before storing real financial, identity, or medical records.
+      </p>
+    </div>
+  </div>
+</section>
+{% endblock %}

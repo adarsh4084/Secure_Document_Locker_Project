@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Preview {{ document.title }} | Vaultly{% endblock %}
+{% block body_class %}app-body{% endblock %}
+{% block content %}
+<section class="preview-page section-wrap"><a class="back-link" href="{{ url_for('dashboard') }}">← Back to your
+        documents</a>
+    <div class="preview-heading">
+        <div>
+            <div class="eyebrow"><span class="eyebrow-dot"></span> PIN VERIFIED · SAFE TEXT PREVIEW</div>
+            <h1>{{ document.title }}</h1>
+            <p>{{ document.original_filename }} · {{ format_bytes(document.size_bytes) }} · {{ document.doc_type }}</p>
+        </div><a class="button button-primary"
+            href="{{ url_for('file_action', file_id=document.id, action='download') }}">Download <span>↓</span></a>
+    </div>
+    <div class="preview-security-note"><span>⌑</span><span>This text was decrypted temporarily for this preview.
+            HTML-like content is displayed as plain text, not executed.</span></div>
+    <pre class="text-preview-box">{{ text_preview }}</pre>
+</section>
+{% endblock %}

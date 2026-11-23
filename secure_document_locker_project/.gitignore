@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+instance/app_secret.key
+instance/vault.sqlite3
+instance/vault.sqlite3-shm
+instance/vault.sqlite3-wal
+instance/encrypted_files/
+instance/temp/
+.pytest_cache/

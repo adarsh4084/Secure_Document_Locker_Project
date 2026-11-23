@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}Activity history | Vaultly{% endblock %}
+{% block body_class %}app-body{% endblock %}
+{% block content %}
+<section class="history-page section-wrap">
+  <div class="page-title-row">
+    <div>
+      <div class="eyebrow"><span class="eyebrow-dot"></span> YOUR VAULT ACTIVITY</div>
+      <h1>Activity history</h1>
+      <p>A transparent record of what happened in your vault.</p>
+    </div><a class="button button-outline" href="{{ url_for('dashboard') }}">← Back to dashboard</a>
+  </div>
+  <div class="history-summary">
+    <div class="history-summary-icon">↻</div>
+    <div><strong>Your activity trail</strong>
+      <p>Uploads, views, downloads, deletions, and security events are recorded for this account. File contents and PINs
+        are never included.</p>
+    </div>
+  </div>
+  <div class="panel history-panel">
+    <div class="history-toolbar">
+      <div>
+        <h2>Recorded events</h2>
+        <p>Newest events appear first.</p>
+      </div>
+      <form method="get" action="{{ url_for('history') }}" class="history-filter"><label class="visually-hidden"
+          for="history-action">Filter activity</label><select class="control" id="history-action" name="action">
+          <option value="">All activity</option>{% for action in actions %}<option value="{{ action }}" {% if
+            selected_action==action %}selected{% endif %}>{{ action|action_label }}</option>{% endfor %}
+        </select><button class="button button-outline button-small" type="submit">Apply</button></form>
+    </div>
+    {% if events %}<div class="history-table-wrap">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Activity</th>
+            <th>Document / detail</th>
+            <th>Time (UTC)</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>{% for event in events %}<tr>
+            <td><span class="history-action"><span class="history-action-icon">{{ event.action|action_icon
+                  }}</span><strong>{{ event.action|action_label }}</strong></span></td>
+            <td>
+              <div class="history-detail-main">{{ event.file_name or 'Account' }}</div>
+              <div class="history-detail-sub">{{ event.details }}</div>
+            </td>
+            <td class="history-time">{{ event.created_at|datetime_short }}</td>
+            <td><span
+                class="history-status {% if event.action == 'PIN_FAILED' or event.action == 'INTEGRITY_ERROR' %}status-warn{% elif event.action == 'FILE_DELETED' %}status-neutral{% else %}status-good{% endif %}">{%
+                if event.action == 'PIN_FAILED' %}Check failed{% elif event.action == 'INTEGRITY_ERROR' %}Review{% else
+                %}Recorded{% endif %}</span></td>
+          </tr>{% endfor %}</tbody>
+      </table>
+    </div>{% if total_pages > 1 %}<div class="pagination"><span>Page {{ page }} of {{ total_pages }}</span>
+      <div>{% if page > 1 %}<a href="{{ url_for('history', action=selected_action, page=page-1) }}">← Previous</a>{%
+        endif %}{% if page < total_pages %}<a href="{{ url_for('history', action=selected_action, page=page+1) }}">Next
+          →</a>{% endif %}</div>
+    </div>{% endif %}{% else %}<div class="empty-state history-empty">
+      <div class="empty-illustration"><span>↻</span></div>
+      <h3>No activity found</h3>
+      <p>Choose another filter or start using your vault to create activity records.</p><a class="button button-outline"
+        href="{{ url_for('history') }}">Show all activity</a>
+    </div>{% endif %}
+  </div>
+  <p class="history-footnote"><span>ⓘ</span> Activity records are stored in the local SQLite database. They are useful
+    for a student demo, but a production audit trail should also be tamper-resistant and backed up securely.</p>
+</section>
+{% endblock %}
